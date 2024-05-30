@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  @apply bg-[#111] text-[#bbb] box-border;
+}
+
+.light {
+  @apply bg-white text-black;
+}
+
+.dark {
+  @apply bg-[#111] text-[#bbb];
+}
+
+.theme {
+  transition: 1s all ease;
+}
