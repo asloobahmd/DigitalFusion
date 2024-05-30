@@ -30,7 +30,7 @@ const Blog = async () => {
   const session = await getServerSession(options);
 
   if (!session) {
-    redirect("/api/auth/signin?callbackUrl=/blog");
+    redirect("/api/auth/signin");
   }
 
   const data = await getData();
