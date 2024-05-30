@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { items } from "./data";
+import { Items, items } from "./data";
 
-const getData = (cat: string) => {
+const getData = (cat: keyof Items) => {
   const data = items[cat];
 
   if (data) {
@@ -13,7 +13,7 @@ const getData = (cat: string) => {
   return notFound();
 };
 
-const Catagory = async ({ params }: { params: { catagory: string } }) => {
+const Catagory = async ({ params }: { params: { catagory: keyof Items } }) => {
   const data = await getData(params.catagory);
 
   return (

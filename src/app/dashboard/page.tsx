@@ -2,24 +2,36 @@
 
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 import { MdDelete } from "react-icons/md";
 import useSWR from "swr";
 
 const Dashboard = () => {
-  const { data: session } = useSession();
+  const { data: session } = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/api/auth/signin?callbackUrl=/dashboard");
+    },
+  });
 
-  const fetcher = (...args: any[]) => fetch(...args).then((res) => res.json());
+  const fetcher = (input: RequestInfo, init?: RequestInit) =>
+    fetch(input, init).then((res) => res.json());
+
   const { data, mutate, error, isLoading } = useSWR(
-    `http://localhost:3000/api/posts?${session?.user.name}`,
+    session && session.user
+      ? `http://localhost:3000/api/posts?user=${session.user.name}`
+      : null,
     fetcher
   );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const title = e.target[0].value;
-    const desc = e.target[1].value;
-    const img = e.target[2].value;
-    const content = e.target[3].value;
+    const form = e.target as HTMLFormElement;
+    const title = (form.elements.namedItem("title") as HTMLInputElement).value;
+    const desc = (form.elements.namedItem("desc") as HTMLInputElement).value;
+    const img = (form.elements.namedItem("img") as HTMLInputElement).value;
+    const content = (form.elements.namedItem("content") as HTMLTextAreaElement)
+      .value;
 
     try {
       await fetch("/api/posts", {
@@ -35,7 +47,7 @@ const Dashboard = () => {
         }),
       });
       mutate();
-      e.target.reset();
+      form.reset();
     } catch (error) {
       console.log(error);
     }
@@ -102,21 +114,24 @@ const Dashboard = () => {
           >
             <input
               type="text"
+              name="title"
               placeholder="title"
               className="p-[12px] focus:outline-none bg-transparent border-2 rounded-[6px]"
             />
             <input
               type="text"
+              name="desc"
               placeholder="desc"
               className="p-[12px] focus:outline-none bg-transparent border-2  rounded-[6px]"
             />
             <input
               type="text"
+              name="img"
               placeholder="image URL"
               className="p-[12px] focus:outline-none bg-transparent border-2  rounded-[6px]"
             />
             <textarea
-              name=""
+              name="content"
               id=""
               placeholder="content"
               className="p-[10px] h-[200px] focus:outline-none bg-transparent border-2 rounded-[6px] resize-none"

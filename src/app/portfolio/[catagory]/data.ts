@@ -1,4 +1,17 @@
-export const items = {
+type ItemType = {
+  id: number;
+  title: string;
+  desc: string;
+  image: string;
+};
+
+export type Items = {
+  Apps: ItemType[];
+  Illustrations: ItemType[];
+  Websites: ItemType[];
+};
+
+export const items: Items = {
   Apps: [
     {
       id: 1,
